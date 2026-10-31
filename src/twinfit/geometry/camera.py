@@ -13,9 +13,15 @@ from twinfit.geometry.se3 import inverse, make_T
 
 
 def K_from_fovy(fovy_rad: float, width: int, height: int) -> np.ndarray:
-    """MuJoCo-style intrinsics: fy = (H/2)/tan(fovy/2), fx = fy, principal point at the centre."""
+    """OpenCV intrinsics of a MuJoCo camera: fy = (H/2)/tan(fovy/2), fx = fy.
+
+    MuJoCo's principal point is the image centre in continuous coordinates, (W/2, H/2), which is
+    what its camprojection sensor reports. OpenCV pixel coordinates place integer values at pixel
+    centres, so the same point is (W/2 - 0.5, H/2 - 0.5). Confirmed on rendered boards: with this
+    shift the true camera pose reprojects detected ChArUco corners at 0.1 px RMS, without it at
+    0.7 px (tests/setup/test_synth_board.py)."""
     fy = (height / 2.0) / np.tan(fovy_rad / 2.0)
-    return np.array([[fy, 0.0, width / 2.0], [0.0, fy, height / 2.0], [0.0, 0.0, 1.0]])
+    return np.array([[fy, 0.0, width / 2.0 - 0.5], [0.0, fy, height / 2.0 - 0.5], [0.0, 0.0, 1.0]])
 
 
 def T_W_C_from_mujoco(cam_xpos: np.ndarray, cam_xmat: np.ndarray) -> np.ndarray:

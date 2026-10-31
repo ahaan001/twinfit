@@ -124,7 +124,7 @@ def test_back_projection_with_distortion_round_trip():
 
 def test_K_from_fovy():
     K = camera.K_from_fovy(np.radians(90.0), 640, 480)
-    np.testing.assert_allclose(K, [[240.0, 0, 320.0], [0, 240.0, 240.0], [0, 0, 1]], atol=1e-9)
+    np.testing.assert_allclose(K, [[240.0, 0, 319.5], [0, 240.0, 239.5], [0, 0, 1]], atol=1e-9)
 
 
 def test_line_distance_skew_and_parallel():
