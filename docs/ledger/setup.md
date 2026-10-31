@@ -224,3 +224,21 @@ Is anything personal in a tracked file? The commit author is the git global iden
 (a GitHub noreply address). `.private/` is ignored and untracked (tested). docs/meta_api_notes.md
 was grepped for the email, team_id, project_id, key name and masked key: no hits. The ledger and
 the prompts name Ahaan, which is intended.
+
+Result (Phase 11):
+- Nine `[setup]` commits on main. Repository https://github.com/ahaan001/twinfit is PUBLIC.
+- CI: the first two runs on main failed because the runner tests generated a clip with rendering
+  (ubuntu-latest has no OpenGL: `mujoco.FatalError: gladLoadGL error`). Fixed by a `render` flag
+  on `generate_clip` used by those tests; run 41225623257 on main is green (ruff clean, 98 tests,
+  50 deselected as live or render).
+- Worktrees: ../twinfit-m1 (m1-perception), ../twinfit-m2 (m2-identify), ../twinfit-m3
+  (m3-verify-agent), all at the main head and pushed. Each synced with `uv sync --all-extras
+  --dev` and passed `uv run pytest -q -m "not live and not render"` (98 passed).
+- A fresh worktree exposed that the milestone package `__init__.py` files had never been written
+  (empty directories are not tracked). Added them; the registry now also treats a missing parent
+  package of the real module path as "absent".
+- synth_small (12 clips) is in ~/twinfit-data/synth/synth_small, generated with the final code.
+- Full suite on main after the last change: 147 passed, 1 skipped (live).
+- History scan: no .private files, videos, .env or session files were ever tracked; no key
+  patterns in `git log -p --all`; no email, team_id or project_id in tracked files.
+- `.twinfit-session.yaml` in this worktree now has allow_spend false. Meta spend: $0.00 (no key).
