@@ -20,12 +20,12 @@ IMPL_CHOICES = ("auto", "real", "stub")
 
 def real_available(stage: StageName) -> bool:
     """True when the real module imports. Only a ModuleNotFoundError for that exact module path
-    counts as 'absent'; any other import error propagates."""
+    (or for one of its parent packages) counts as 'absent'; any other import error propagates."""
     module_path = REAL_IMPLS[stage].split(":")[0]
     try:
         importlib.import_module(module_path)
     except ModuleNotFoundError as e:
-        if e.name == module_path:
+        if e.name == module_path or module_path.startswith(f"{e.name}."):
             return False
         raise
     return True
