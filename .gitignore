@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.ruff_cache/
+.DS_Store
+.private/
+.env
+.twinfit-session.yaml
+runs/
+*.mp4
+*.mov
+*.MOV
+!docs/media/**
