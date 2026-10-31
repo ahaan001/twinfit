@@ -462,7 +462,11 @@ def _dynamics_gt(
     )
 
 
-def generate_clip(scene: str, seed: int, out_dir: Path, settings: SuiteSettings) -> Path:
+def generate_clip(
+    scene: str, seed: int, out_dir: Path, settings: SuiteSettings, render: bool = True
+) -> Path:
+    """Writes one clip folder. With render=False the video and masks are skipped (for tests on
+    machines without OpenGL); every other file is still written."""
     out_dir = Path(out_dir)
     spec = build_scene(scene, seed)
     gravity_W = gravity_for_orientation(spec.board_orientation)
@@ -506,16 +510,17 @@ def generate_clip(scene: str, seed: int, out_dir: Path, settings: SuiteSettings)
         T_W_C_render = T_W_C_from_mujoco(data.cam_xpos[0], data.cam_xmat[0])
         if not np.allclose(T_W_C_render, T_W_C, atol=1e-9):
             raise RuntimeError("camera pose in the compiled scene differs from the sampled pose")
-        render_clip(
-            scene_model,
-            q,
-            part_ids,
-            settings.width,
-            settings.height,
-            settings.fps,
-            out_dir / "video.mp4",
-            gt / "masks",
-        )
+        if render:
+            render_clip(
+                scene_model,
+                q,
+                part_ids,
+                settings.width,
+                settings.height,
+                settings.fps,
+                out_dir / "video.mp4",
+                gt / "masks",
+            )
 
     intrinsics = CameraIntrinsics(
         camera_id="synthetic",

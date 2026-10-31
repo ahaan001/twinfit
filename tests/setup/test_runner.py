@@ -21,7 +21,7 @@ TINY = SuiteSettings((0,), 64, 36, 10.0, 1.0)
 @pytest.fixture(scope="module")
 def tiny_clip(tmp_path_factory):
     out = tmp_path_factory.mktemp("clip") / "pendulum_1r__s0"
-    return generate_clip("pendulum_1r", 0, out, TINY)
+    return generate_clip("pendulum_1r", 0, out, TINY, render=False)
 
 
 def test_resolve_auto_falls_back_to_stub_and_real_raises_when_absent():
