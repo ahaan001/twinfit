@@ -233,7 +233,15 @@ def meta_smoke() -> None:
     result = client.smoke()
     for model_id in result["models"]:
         console.print(model_id)
-    console.print(f"response: {result['output_text']!r}")
+    console.print(
+        f"response: {result['output_text']!r} (status {result['status']}, "
+        f"{result['output_tokens']} output tokens)"
+    )
+    if result["incomplete_reason"]:
+        console.print(
+            f"incomplete: {result['incomplete_reason']}; reasoning tokens count against "
+            "max_output_tokens, so raise it for real calls"
+        )
     console.print(f"cost: ${result['cost_usd']:.6f} (tag {session.load_session().tag})")
 
 

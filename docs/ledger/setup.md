@@ -242,3 +242,11 @@ Result (Phase 11):
 - History scan: no .private files, videos, .env or session files were ever tracked; no key
   patterns in `git log -p --all`; no email, team_id or project_id in tracked files.
 - `.twinfit-session.yaml` in this worktree now has allow_spend false. Meta spend: $0.00 (no key).
+
+## Addendum: live smoke (2026-10-31, after Ahaan added the key)
+
+- `TWINFIT_LIVE=1 uv run pytest -m live`: 1 passed (138 output tokens, answer OK, $0.0006).
+- `uv run twinfit meta-smoke`: models listed; the OK call returned status incomplete, reason
+  max_output_tokens, 254 reasoning tokens of 256, empty text ($0.0011). A third diagnostic call
+  reproduced it. Finding recorded in docs/meta_api_notes.md; `meta-smoke` now prints the status.
+- Meta spend: tag setup $0.0028 over 3 calls, global $0.0028. Acceptance criterion 9: passes.

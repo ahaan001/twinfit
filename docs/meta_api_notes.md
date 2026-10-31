@@ -164,6 +164,18 @@ Also via Modal and OpenRouter. Always reasons (reasoning_effort low to xhigh, de
 
 The hackathon notes describe environment variables (`ANTHROPIC_BASE_URL`, `ANTHROPIC_AUTH_TOKEN`, model overrides) that route Claude Code itself through the Meta API. Twinfit does not do this: it spends Meta credits on every turn and is unrelated to the build. See CLAUDE.md.
 
+## Live findings (setup smoke calls, 2026-10-31)
+
+- `GET /v1/models` works with the OpenAI SDK pointed at the base URL; the list includes
+  muse-spark-1.3, muse-spark-1.2 and muse-spark-1.1 among others.
+- On `muse-spark-1.3`, reasoning tokens count against `max_output_tokens`. A one-word prompt with
+  `max_output_tokens=256` returned `status="incomplete"`, `incomplete_details.reason=
+  "max_output_tokens"`, 254 reasoning tokens and an empty `output_text` in two of three calls
+  (the third used 138 output tokens and answered). Set a generous `max_output_tokens` and check
+  `response.status` before reading `output_text`.
+- `usage.input_tokens_details.cached_tokens` and `usage.output_tokens_details.reasoning_tokens`
+  are returned; 18 input tokens for the smoke prompt.
+
 ## 11. Documentation index
 
 All `/docs/...` paths are under https://dev.meta.ai.

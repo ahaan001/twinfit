@@ -176,7 +176,11 @@ def responses_create(
 
 
 def smoke(tag: str | None = None) -> dict[str, Any]:
-    """List models, then ask muse-spark-1.3 for the single word OK (uncached, recorded)."""
+    """List models, then ask muse-spark-1.3 for the single word OK (uncached, recorded).
+
+    Live finding (2026-10-31): reasoning tokens count against max_output_tokens, and with 256 the
+    model sometimes spends the whole budget reasoning and returns status "incomplete" with no
+    text. The returned status and incomplete_reason make that visible."""
     client = raw_client()
     models = [m.id for m in with_retries(client.models.list)]
     response = responses_create(
@@ -186,8 +190,12 @@ def smoke(tag: str | None = None) -> dict[str, Any]:
         cache=False,
         tag=tag,
     )
+    details = getattr(response, "incomplete_details", None)
     return {
         "models": models,
         "output_text": response.output_text,
+        "status": getattr(response, "status", None),
+        "incomplete_reason": getattr(details, "reason", None),
+        "output_tokens": response.usage.output_tokens if response.usage else None,
         "cost_usd": config.price_usd(config.MUSE_SPARK, response.usage),
     }
